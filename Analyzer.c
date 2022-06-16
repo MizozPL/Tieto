@@ -4,6 +4,7 @@
 
 #include "Analyzer.h"
 #include "LongDoubleArray.h"
+#include "Watchdog.h"
 #include <pthread.h>
 #include <stdio.h>
 #include <malloc.h>
@@ -12,6 +13,8 @@
 struct Analyzer {
     Queue *reader_analyzer_queue;
     Queue *analyzer_printer_queue;
+    Watchdog* watchdog;
+    size_t watchdog_index;
     pthread_t thread;
     pthread_mutex_t mutex;
     bool should_stop;
@@ -36,7 +39,7 @@ static bool analyzer_should_stop_synchronized(Analyzer *analyzer) {
     return return_value;
 }
 
-static void analyzer_request_stop_synchronized(Analyzer *analyzer) {
+void analyzer_request_stop_synchronized(Analyzer *analyzer) {
     if (analyzer == NULL) {
         perror("reader_request_stop_synchronized called on NULL");
         return;
@@ -45,6 +48,15 @@ static void analyzer_request_stop_synchronized(Analyzer *analyzer) {
     pthread_mutex_lock(&analyzer->mutex);
     analyzer->should_stop = true;
     pthread_mutex_unlock(&analyzer->mutex);
+
+    queue_lock(analyzer->reader_analyzer_queue);
+    queue_notify_extract(analyzer->reader_analyzer_queue);
+    queue_notify_insert(analyzer->analyzer_printer_queue);
+    queue_unlock(analyzer->reader_analyzer_queue);
+}
+
+static void analyzer_request_stop_synchronized_void(void* analyzer) {
+    analyzer_request_stop_synchronized((Analyzer*) analyzer);
 }
 
 static size_t analyze_cpu_count(char *input) {
@@ -93,6 +105,7 @@ static void *reader_thread(void *args) {
 
     CpuData *previous_cpu_data = NULL;
     while (!analyzer_should_stop_synchronized(analyzer)) {
+        watchdog_update(analyzer->watchdog, analyzer->watchdog_index);
 
         queue_lock(analyzer->reader_analyzer_queue);
         while (queue_is_empty(analyzer->reader_analyzer_queue)) {
@@ -170,7 +183,7 @@ static void *reader_thread(void *args) {
     return NULL;
 }
 
-Analyzer *analyzer_create(Queue *reader_analyzer_queue, Queue *analyzer_printer_queue) {
+Analyzer *analyzer_create(Queue *reader_analyzer_queue, Queue *analyzer_printer_queue, Watchdog* watchdog) {
     if (reader_analyzer_queue == NULL) {
         perror("reader_analyzer_queue on NULL");
         return NULL;
@@ -191,7 +204,9 @@ Analyzer *analyzer_create(Queue *reader_analyzer_queue, Queue *analyzer_printer_
             .mutex = PTHREAD_MUTEX_INITIALIZER,
             .should_stop = false,
             .reader_analyzer_queue = reader_analyzer_queue,
-            .analyzer_printer_queue = analyzer_printer_queue
+            .analyzer_printer_queue = analyzer_printer_queue,
+            .watchdog = watchdog,
+            .watchdog_index = watchdog_register_watch(watchdog, &analyzer_request_stop_synchronized_void, analyzer)
     };
 
     if (pthread_create(&analyzer->thread, NULL, reader_thread, (void *) analyzer) != 0) {
@@ -204,17 +219,10 @@ Analyzer *analyzer_create(Queue *reader_analyzer_queue, Queue *analyzer_printer_
     return analyzer;
 }
 
-void analyzer_destroy(Analyzer *analyzer) {
+void analyzer_await_and_destroy(Analyzer *analyzer) {
     if (analyzer == NULL) {
         return;
     }
-
-    analyzer_request_stop_synchronized(analyzer);
-
-    queue_lock(analyzer->reader_analyzer_queue);
-    queue_notify_extract(analyzer->reader_analyzer_queue);
-    queue_notify_insert(analyzer->analyzer_printer_queue);
-    queue_unlock(analyzer->reader_analyzer_queue);
 
     pthread_join(analyzer->thread, NULL);
     pthread_mutex_destroy(&analyzer->mutex);

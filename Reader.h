@@ -6,11 +6,13 @@
 #define TIETO_READER_H
 
 #include <stdbool.h>
+#include "Queue.h"
+#include "Watchdog.h"
 
 typedef struct Reader Reader;
 
-const size_t READER_CHAR_BUFFER_SIZE;
-Reader *reader_create();
-void reader_destroy(Reader *reader);
+void reader_request_stop_synchronized(Reader* reader);
+Reader *reader_create(Queue *reader_analyzer_queue, Watchdog* watchdog);
+void reader_await_and_destroy(Reader *reader);
 
 #endif //TIETO_READER_H

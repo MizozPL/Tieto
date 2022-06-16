@@ -20,6 +20,8 @@ void queue_lock(Queue* queue);
 void queue_unlock(Queue* queue);
 void queue_wait_to_insert(Queue* queue);
 void queue_wait_to_extract(Queue* queue);
+void queue_wait_to_insert_with_timeout(Queue* queue, time_t seconds);
+void queue_wait_to_extract_with_timeout(Queue* queue, time_t seconds);
 void queue_notify_insert(Queue* queue);
 void queue_notify_extract(Queue* queue);
 
