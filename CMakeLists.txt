@@ -7,6 +7,6 @@ set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
 set(THREADS_PREFER_PTHREAD_FLAG TRUE)
 find_package(Threads REQUIRED)
 
-add_compile_options(-Wall -Wextra -pedantic -Werror -Weverything)
-add_executable(Tieto main.c Reader.c Reader.h Queue.c Queue.h Analyzer.c Analyzer.h LongDoubleArray.c LongDoubleArray.h Printer.c Printer.h Watchdog.c Watchdog.h)
+add_compile_options(-Wall -Wextra -pedantic -Werror -Weverything -Wno-disabled-macro-expansion)
+add_executable(Tieto main.c Reader.c Reader.h Queue.c Queue.h Analyzer.c Analyzer.h LongDoubleArray.c LongDoubleArray.h Printer.c Printer.h Watchdog.c Watchdog.h cmake-build-debug/Logger.c cmake-build-debug/Logger.h)
 target_link_libraries(Tieto Threads::Threads)
