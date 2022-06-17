@@ -1,5 +1,5 @@
-#include "Queue.h"
-#include "Logger.h"
+#include "../include/Queue.h"
+#include "../include/Logger.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <pthread.h>

@@ -1,7 +1,6 @@
-#include "Analyzer.h"
-#include "LongDoubleArray.h"
-#include "Watchdog.h"
-#include "Logger.h"
+#include "../include/Analyzer.h"
+#include "../include/LongDoubleArray.h"
+#include "../include/Logger.h"
 #include <pthread.h>
 #include <stdio.h>
 #include <malloc.h>

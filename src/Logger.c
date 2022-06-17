@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
-#include "Logger.h"
+#include "../include/Logger.h"
 
 static pthread_mutex_t global_logger_mutex = PTHREAD_MUTEX_INITIALIZER;
 static Logger *global_logger = NULL;

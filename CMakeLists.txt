@@ -8,5 +8,5 @@ set(THREADS_PREFER_PTHREAD_FLAG TRUE)
 find_package(Threads REQUIRED)
 
 add_compile_options(-Wall -Wextra -pedantic -Werror -Weverything -Wno-disabled-macro-expansion -Wno-padded)
-add_executable(Tieto src/main.c src/Reader.c src/Reader.h src/Queue.c src/Queue.h src/Analyzer.c src/Analyzer.h src/LongDoubleArray.c src/LongDoubleArray.h src/Printer.c src/Printer.h src/Watchdog.c src/Watchdog.h src/Logger.c src/Logger.h)
+add_executable(Tieto src/main.c src/Reader.c include/Reader.h src/Queue.c include/Queue.h src/Analyzer.c include/Analyzer.h src/LongDoubleArray.c include/LongDoubleArray.h src/Printer.c include/Printer.h src/Watchdog.c include/Watchdog.h src/Logger.c include/Logger.h)
 target_link_libraries(Tieto Threads::Threads)

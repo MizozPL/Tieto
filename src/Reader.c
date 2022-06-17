@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <pthread.h>
-#include "Reader.h"
-#include "Logger.h"
+#include "../include/Reader.h"
+#include "../include/Logger.h"
 
 static const size_t READER_CHAR_BUFFER_SIZE = 4096;
 

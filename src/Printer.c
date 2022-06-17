@@ -1,9 +1,8 @@
 #include <stdio.h>
 #include <pthread.h>
-#include "Printer.h"
-#include "LongDoubleArray.h"
-#include "Watchdog.h"
-#include "Logger.h"
+#include "../include/Printer.h"
+#include "../include/LongDoubleArray.h"
+#include "../include/Logger.h"
 
 struct Printer {
     Queue *analyzer_printer_queue;

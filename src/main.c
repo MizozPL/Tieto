@@ -1,12 +1,12 @@
 #include <unistd.h>
 #include <signal.h>
 
-#include "Reader.h"
-#include "Analyzer.h"
-#include "Printer.h"
-#include "LongDoubleArray.h"
-#include "Watchdog.h"
-#include "Logger.h"
+#include "../include/Reader.h"
+#include "../include/Analyzer.h"
+#include "../include/Printer.h"
+#include "../include/LongDoubleArray.h"
+#include "../include/Watchdog.h"
+#include "../include/Logger.h"
 
 static const size_t READER_ANALYZER_QUEUE_CAPACITY = 10;
 static const size_t ANALYZER_PRINTER_QUEUE_CAPACITY = 10;

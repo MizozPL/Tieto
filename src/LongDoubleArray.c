@@ -1,4 +1,4 @@
-#include "LongDoubleArray.h"
+#include "../include/LongDoubleArray.h"
 
 LongDoubleArray* long_double_array_create(size_t num_elements) {
     LongDoubleArray* array = malloc(sizeof(LongDoubleArray) + sizeof(long double) * num_elements);

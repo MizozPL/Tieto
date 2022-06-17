@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <pthread.h>
-#include "Watchdog.h"
-#include "Logger.h"
+#include "../include/Watchdog.h"
+#include "../include/Logger.h"
 
 static struct timespec WATCHDOG_UPDATE_INTERVAL = {.tv_sec = 2, .tv_nsec = 0};
 
