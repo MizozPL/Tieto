@@ -1,7 +1,3 @@
-//
-// Created by Admin on 16.06.2022.
-//
-
 #include "LongDoubleArray.h"
 
 LongDoubleArray* long_double_array_create(size_t num_elements) {

@@ -1,8 +1,5 @@
-//
-// Created by Admin on 16.06.2022.
-//
-
 #include "Queue.h"
+#include "Logger.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <pthread.h>
@@ -21,13 +18,14 @@ struct Queue {
 
 Queue* queue_create(size_t capacity) {
     if(capacity <= 0) {
-        perror("queue_create capacity <= 0");
+        logger_log(logger_get_global(), LOGGER_LEVEL_WARN,
+                   "Received queue_create call with capacity <= 0.");
         return NULL;
     }
 
     Queue* queue = malloc(sizeof(Queue) + sizeof(void*) * capacity);
     if(queue == NULL) {
-        perror("malloc error");
+        logger_log(logger_get_global(), LOGGER_LEVEL_ERROR, "Received NULL from malloc call in queue_create.");
         return NULL;
     }
 
@@ -46,7 +44,8 @@ Queue* queue_create(size_t capacity) {
 
 void queue_destroy(Queue* queue) {
     if(queue == NULL) {
-        perror("queue_destroy on NULL");
+        logger_log(logger_get_global(), LOGGER_LEVEL_WARN,
+                   "Received queue_destroy call with queue = NULL.");
         return;
     }
 
@@ -58,7 +57,8 @@ void queue_destroy(Queue* queue) {
 
 bool queue_is_empty(const Queue* queue) {
     if(queue == NULL) {
-        perror("queue_is_empty on NULL");
+        logger_log(logger_get_global(), LOGGER_LEVEL_WARN,
+                   "Received queue_is_empty call with queue = NULL.");
         return false;
     }
 
@@ -67,7 +67,8 @@ bool queue_is_empty(const Queue* queue) {
 
 bool queue_is_full(const Queue* queue) {
     if(queue == NULL) {
-        perror("queue_is_full on NULL");
+        logger_log(logger_get_global(), LOGGER_LEVEL_WARN,
+                   "Received queue_is_full call with queue = NULL.");
         return false;
     }
 
@@ -76,12 +77,14 @@ bool queue_is_full(const Queue* queue) {
 
 void queue_insert(Queue* queue, void* object) {
     if(queue == NULL) {
-        perror("queue_insert on NULL");
+        logger_log(logger_get_global(), LOGGER_LEVEL_WARN,
+                   "Received queue_insert call with queue = NULL.");
         return;
     }
 
     if(queue_is_full(queue)) {
-        perror("queue_insert on a full queue");
+        logger_log(logger_get_global(), LOGGER_LEVEL_WARN,
+                   "Received queue_insert call on a full queue.");
         return;
     }
 
@@ -92,12 +95,14 @@ void queue_insert(Queue* queue, void* object) {
 
 void* queue_extract(Queue* queue) {
     if(queue == NULL) {
-        perror("queue_extract on NULL");
+        logger_log(logger_get_global(), LOGGER_LEVEL_WARN,
+                   "Received queue_extract call with queue = NULL.");
         return NULL;
     }
 
     if(queue_is_empty(queue)) {
-        perror("queue_extract on an empty queue");
+        logger_log(logger_get_global(), LOGGER_LEVEL_WARN,
+                   "Received queue_extract call on an empty queue.");
         return NULL;
     }
 
@@ -110,7 +115,8 @@ void* queue_extract(Queue* queue) {
 
 void queue_lock(Queue* queue) {
     if(queue == NULL) {
-        perror("queue_lock on NULL");
+        logger_log(logger_get_global(), LOGGER_LEVEL_WARN,
+                   "Received queue_lock call with queue = NULL.");
         return;
     }
     pthread_mutex_lock(&queue->mutex);
@@ -118,21 +124,38 @@ void queue_lock(Queue* queue) {
 
 void queue_unlock(Queue* queue) {
     if(queue == NULL) {
-        perror("queue_unlock on NULL");
+        logger_log(logger_get_global(), LOGGER_LEVEL_WARN,
+                   "Received queue_unlock call with queue = NULL.");
         return;
     }
     pthread_mutex_unlock(&queue->mutex);
 }
 
 void queue_wait_to_insert(Queue* queue) {
+    if(queue == NULL) {
+        logger_log(logger_get_global(), LOGGER_LEVEL_WARN,
+                   "Received queue_wait_to_insert call with queue = NULL.");
+        return;
+    }
     pthread_cond_wait(&queue->can_insert, &queue->mutex);
 }
 
 void queue_wait_to_extract(Queue* queue) {
+    if(queue == NULL) {
+        logger_log(logger_get_global(), LOGGER_LEVEL_WARN,
+                   "Received queue_wait_to_extract call with queue = NULL.");
+        return;
+    }
     pthread_cond_wait(&queue->can_extract, &queue->mutex);
 }
 
 void queue_wait_to_insert_with_timeout(Queue* queue, time_t seconds) {
+    if(queue == NULL) {
+        logger_log(logger_get_global(), LOGGER_LEVEL_WARN,
+                   "Received queue_wait_to_insert_with_timeout call with queue = NULL.");
+        return;
+    }
+
     struct timeval tp;
     struct timespec ts;
 
@@ -145,6 +168,12 @@ void queue_wait_to_insert_with_timeout(Queue* queue, time_t seconds) {
 }
 
 void queue_wait_to_extract_with_timeout(Queue* queue, time_t seconds) {
+    if(queue == NULL) {
+        logger_log(logger_get_global(), LOGGER_LEVEL_WARN,
+                   "Received queue_wait_to_extract_with_timeout call with queue = NULL.");
+        return;
+    }
+
     struct timeval tp;
     struct timespec ts;
 
@@ -157,10 +186,20 @@ void queue_wait_to_extract_with_timeout(Queue* queue, time_t seconds) {
 }
 
 void queue_notify_insert(Queue* queue) {
+    if(queue == NULL) {
+        logger_log(logger_get_global(), LOGGER_LEVEL_WARN,
+                   "Received queue_notify_insert call with queue = NULL.");
+        return;
+    }
     pthread_cond_signal(&queue->can_insert);
 }
 
 void queue_notify_extract(Queue* queue) {
+    if(queue == NULL) {
+        logger_log(logger_get_global(), LOGGER_LEVEL_WARN,
+                   "Received queue_notify_extract call with queue = NULL.");
+        return;
+    }
     pthread_cond_signal(&queue->can_extract);
 }
 

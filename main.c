@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <unistd.h>
 #include <signal.h>
 
@@ -21,11 +20,13 @@ static Printer *printer;
 static void sighandler(int signo) {
     if(signo == SIGTERM) {
         if(running) {
-            printf("Stopping!\n");
-            watchdog_request_stop_synchronized(watchdog);
+            logger_log(logger_get_global(), LOGGER_LEVEL_INFO, "SIGTERM caught. Stopping.");
+            watchdog_pause_watching(watchdog);
+
             reader_request_stop_synchronized(reader);
             analyzer_request_stop_synchronized(analyzer);
             printer_request_stop_synchronized(printer);
+            watchdog_request_stop_synchronized(watchdog);
             running = false;
         }
     }
