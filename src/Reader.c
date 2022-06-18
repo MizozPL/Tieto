@@ -5,6 +5,8 @@
 #include "../include/Reader.h"
 #include "../include/Logger.h"
 
+static const time_t READER_QUEUE_WAIT_TIMEOUT = 1;
+
 static const size_t READER_CHAR_BUFFER_SIZE = 4096;
 
 static struct timespec READER_UPDATE_INTERVAL = {.tv_sec = 1, .tv_nsec = 0};
@@ -93,10 +95,6 @@ void reader_request_stop_synchronized(Reader *const reader) {
     reader->should_stop = true;
     pthread_mutex_unlock(&reader->mutex);
 
-    queue_lock(reader->reader_analyzer_queue);
-    queue_notify_insert(reader->reader_analyzer_queue);
-    queue_unlock(reader->reader_analyzer_queue);
-
     logger_log(logger_get_global(), LOGGER_LEVEL_DEBUG, "reader_request_stop_synchronized: Success.");
 }
 
@@ -159,7 +157,7 @@ static void *reader_thread(void *args) {
 
         queue_lock(reader->reader_analyzer_queue);
         while (queue_is_full(reader->reader_analyzer_queue)) {
-            queue_wait_to_insert(reader->reader_analyzer_queue);
+            queue_wait_to_insert_with_timeout(reader->reader_analyzer_queue, READER_QUEUE_WAIT_TIMEOUT);
             if (reader_should_stop_synchronized(reader)) {
                 queue_unlock(reader->reader_analyzer_queue);
                 free(buffer);

@@ -6,6 +6,8 @@
 #include <malloc.h>
 #include <string.h>
 
+static const time_t ANALYZER_QUEUE_WAIT_TIMEOUT = 1;
+
 struct Analyzer {
     Queue *reader_analyzer_queue;
     Queue *analyzer_printer_queue;
@@ -107,14 +109,6 @@ void analyzer_request_stop_synchronized(Analyzer *const analyzer) {
     analyzer->should_stop = true;
     pthread_mutex_unlock(&analyzer->mutex);
 
-    queue_lock(analyzer->reader_analyzer_queue);
-    queue_notify_extract(analyzer->reader_analyzer_queue);
-    queue_unlock(analyzer->reader_analyzer_queue);
-
-    queue_lock(analyzer->analyzer_printer_queue);
-    queue_notify_insert(analyzer->analyzer_printer_queue);
-    queue_unlock(analyzer->analyzer_printer_queue);
-
     logger_log(logger_get_global(), LOGGER_LEVEL_DEBUG, "analyzer_request_stop_synchronized: Success.");
 }
 
@@ -199,7 +193,7 @@ static void *analyzer_thread(void *args) {
 
         queue_lock(analyzer->reader_analyzer_queue);
         while (queue_is_empty(analyzer->reader_analyzer_queue)) {
-            queue_wait_to_extract(analyzer->reader_analyzer_queue);
+            queue_wait_to_extract_with_timeout(analyzer->reader_analyzer_queue, ANALYZER_QUEUE_WAIT_TIMEOUT);
             if (analyzer_should_stop_synchronized(analyzer)) {
                 queue_unlock(analyzer->reader_analyzer_queue);
                 free(previous_cpu_data);
@@ -251,7 +245,7 @@ static void *analyzer_thread(void *args) {
         if (!error) {
             queue_lock(analyzer->analyzer_printer_queue);
             while (queue_is_full(analyzer->analyzer_printer_queue)) {
-                queue_wait_to_insert(analyzer->analyzer_printer_queue);
+                queue_wait_to_insert_with_timeout(analyzer->analyzer_printer_queue, ANALYZER_QUEUE_WAIT_TIMEOUT);
                 if (analyzer_should_stop_synchronized(analyzer)) {
                     queue_unlock(analyzer->analyzer_printer_queue);
                     free(cpu_data);

@@ -4,6 +4,8 @@
 #include "../include/LongDoubleArray.h"
 #include "../include/Logger.h"
 
+static const time_t PRINTER_QUEUE_WAIT_TIMEOUT = 1;
+
 struct Printer {
     Queue *analyzer_printer_queue;
     Watchdog *watchdog;
@@ -88,10 +90,6 @@ void printer_request_stop_synchronized(Printer *const printer) {
     printer->should_stop = true;
     pthread_mutex_unlock(&printer->mutex);
 
-    queue_lock(printer->analyzer_printer_queue);
-    queue_notify_extract(printer->analyzer_printer_queue);
-    queue_unlock(printer->analyzer_printer_queue);
-
     logger_log(logger_get_global(), LOGGER_LEVEL_DEBUG, "printer_request_stop_synchronized: Success.");
 }
 
@@ -125,7 +123,7 @@ static void *printer_thread(void *args) {
 
         queue_lock(printer->analyzer_printer_queue);
         while (queue_is_empty(printer->analyzer_printer_queue)) {
-            queue_wait_to_extract(printer->analyzer_printer_queue);
+            queue_wait_to_extract_with_timeout(printer->analyzer_printer_queue, PRINTER_QUEUE_WAIT_TIMEOUT);
             if (printer_should_stop_synchronized(printer)) {
                 queue_unlock(printer->analyzer_printer_queue);
                 logger_log(logger_get_global(), LOGGER_LEVEL_DEBUG, "printer_thread: Ending.");
