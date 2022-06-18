@@ -25,13 +25,13 @@ static void analyzer_request_stop_synchronized_void(void *analyzer);
 
 static bool analyzer_should_stop_synchronized(Analyzer *analyzer);
 
-static size_t analyze_cpu_count(char *input);
+static size_t analyze_cpu_count(const char input[]);
 
-static void analyze_line(char *line, CpuData *cpu_data);
+static void analyze_line(const char line[], CpuData *cpu_data);
 
 static void *analyzer_thread(void *args);
 
-Analyzer *analyzer_create(Queue *reader_analyzer_queue, Queue *analyzer_printer_queue, Watchdog *watchdog) {
+Analyzer *analyzer_create(Queue *const reader_analyzer_queue, Queue *const analyzer_printer_queue, Watchdog *const watchdog) {
     logger_log(logger_get_global(), LOGGER_LEVEL_DEBUG, "analyzer_create: Entry.");
 
     if (reader_analyzer_queue == NULL) {
@@ -78,7 +78,7 @@ Analyzer *analyzer_create(Queue *reader_analyzer_queue, Queue *analyzer_printer_
     return analyzer;
 }
 
-void analyzer_await_and_destroy(Analyzer *analyzer) {
+void analyzer_await_and_destroy(Analyzer *const analyzer) {
     logger_log(logger_get_global(), LOGGER_LEVEL_DEBUG, "analyzer_await_and_destroy: Entry.");
 
     if (analyzer == NULL) {
@@ -94,7 +94,7 @@ void analyzer_await_and_destroy(Analyzer *analyzer) {
     logger_log(logger_get_global(), LOGGER_LEVEL_DEBUG, "analyzer_await_and_destroy: Success.");
 }
 
-void analyzer_request_stop_synchronized(Analyzer *analyzer) {
+void analyzer_request_stop_synchronized(Analyzer *const analyzer) {
     logger_log(logger_get_global(), LOGGER_LEVEL_DEBUG, "analyzer_request_stop_synchronized: Entry.");
 
     if (analyzer == NULL) {
@@ -118,11 +118,11 @@ void analyzer_request_stop_synchronized(Analyzer *analyzer) {
     logger_log(logger_get_global(), LOGGER_LEVEL_DEBUG, "analyzer_request_stop_synchronized: Success.");
 }
 
-static void analyzer_request_stop_synchronized_void(void *analyzer) {
+static void analyzer_request_stop_synchronized_void(void *const analyzer) {
     analyzer_request_stop_synchronized((Analyzer *) analyzer);
 }
 
-static bool analyzer_should_stop_synchronized(Analyzer *analyzer) {
+static bool analyzer_should_stop_synchronized(Analyzer *const analyzer) {
     if (analyzer == NULL) {
         logger_log(logger_get_global(), LOGGER_LEVEL_WARN,
                    "Received analyzer_should_stop_synchronized call with analyzer = NULL.");
@@ -137,7 +137,7 @@ static bool analyzer_should_stop_synchronized(Analyzer *analyzer) {
     return return_value;
 }
 
-static size_t analyze_cpu_count(char *input) {
+static size_t analyze_cpu_count(const char input[const]) {
     logger_log(logger_get_global(), LOGGER_LEVEL_DEBUG, "analyze_cpu_count: Entry.");
 
     if (input == NULL) {
@@ -158,7 +158,7 @@ static size_t analyze_cpu_count(char *input) {
     return cpu_count;
 }
 
-static void analyze_line(char *line, CpuData *cpu_data) {
+static void analyze_line(const char line[const], CpuData *const cpu_data) {
     if (cpu_data == NULL) {
         logger_log(logger_get_global(), LOGGER_LEVEL_WARN, "Received cpu_data call with cpu_data = NULL.");
         return;

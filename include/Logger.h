@@ -7,12 +7,12 @@ enum LOGGER_LEVEL {
     LOGGER_LEVEL_DEBUG = 0, LOGGER_LEVEL_INFO = 1, LOGGER_LEVEL_WARN = 2, LOGGER_LEVEL_ERROR = 3
 };
 
-Logger *logger_create(char *path);
+Logger *logger_create(const char path[]);
 
 void logger_destroy(Logger *logger);
 
 Logger *logger_get_global(void);
 
-void logger_log(Logger *logger, enum LOGGER_LEVEL level, char *message);
+void logger_log(Logger *logger, enum LOGGER_LEVEL level, const char message[]);
 
 #endif //TIETO_LOGGER_H

@@ -12,14 +12,14 @@ static const size_t READER_ANALYZER_QUEUE_CAPACITY = 10;
 static const size_t ANALYZER_PRINTER_QUEUE_CAPACITY = 10;
 
 static bool running = false;
-static Watchdog* watchdog;
+static Watchdog *watchdog;
 static Reader *reader;
 static Analyzer *analyzer;
 static Printer *printer;
 
 static void sighandler(int signo) {
-    if(signo == SIGTERM) {
-        if(running) {
+    if (signo == SIGTERM) {
+        if (running) {
             logger_log(logger_get_global(), LOGGER_LEVEL_INFO, "SIGTERM caught. Stopping.");
             watchdog_pause_watching(watchdog);
 
@@ -74,13 +74,13 @@ int main() {
     logger_log(logger_get_global(), LOGGER_LEVEL_INFO, "Children joined.");
 
     logger_log(logger_get_global(), LOGGER_LEVEL_INFO, "Cleaning queues.");
-    while(!queue_is_empty(reader_analyzer_queue)) {
-        void* object = queue_extract(reader_analyzer_queue);
+    while (!queue_is_empty(reader_analyzer_queue)) {
+        void *object = queue_extract(reader_analyzer_queue);
         free(object);
     }
 
-    while(!queue_is_empty(analyzer_printer_queue)) {
-        LongDoubleArray* object = queue_extract(analyzer_printer_queue);
+    while (!queue_is_empty(analyzer_printer_queue)) {
+        LongDoubleArray *object = queue_extract(analyzer_printer_queue);
         long_double_array_destroy(object);
     }
 

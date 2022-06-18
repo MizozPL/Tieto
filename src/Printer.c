@@ -19,7 +19,7 @@ static bool printer_should_stop_synchronized(Printer *printer);
 
 static void *printer_thread(void *args);
 
-Printer *printer_create(Queue *analyzer_printer_queue, Watchdog *watchdog) {
+Printer *printer_create(Queue *const analyzer_printer_queue, Watchdog *const watchdog) {
     logger_log(logger_get_global(), LOGGER_LEVEL_DEBUG, "printer_create: Entry.");
 
     if (analyzer_printer_queue == NULL) {
@@ -59,7 +59,7 @@ Printer *printer_create(Queue *analyzer_printer_queue, Watchdog *watchdog) {
     return printer;
 }
 
-void printer_await_and_destroy(Printer *printer) {
+void printer_await_and_destroy(Printer *const printer) {
     logger_log(logger_get_global(), LOGGER_LEVEL_DEBUG, "printer_await_and_destroy: Entry.");
 
     if (printer == NULL) {
@@ -75,7 +75,7 @@ void printer_await_and_destroy(Printer *printer) {
     logger_log(logger_get_global(), LOGGER_LEVEL_DEBUG, "printer_await_and_destroy: Success.");
 }
 
-void printer_request_stop_synchronized(Printer *printer) {
+void printer_request_stop_synchronized(Printer *const printer) {
     logger_log(logger_get_global(), LOGGER_LEVEL_DEBUG, "printer_request_stop_synchronized: Entry.");
 
     if (printer == NULL) {
@@ -95,11 +95,11 @@ void printer_request_stop_synchronized(Printer *printer) {
     logger_log(logger_get_global(), LOGGER_LEVEL_DEBUG, "printer_request_stop_synchronized: Success.");
 }
 
-static void printer_request_stop_synchronized_void(void *printer) {
+static void printer_request_stop_synchronized_void(void *const printer) {
     printer_request_stop_synchronized((Printer *) printer);
 }
 
-static bool printer_should_stop_synchronized(Printer *printer) {
+static bool printer_should_stop_synchronized(Printer *const printer) {
     if (printer == NULL) {
         logger_log(logger_get_global(), LOGGER_LEVEL_WARN,
                    "Received printer_should_stop_synchronized call with printer = NULL.");

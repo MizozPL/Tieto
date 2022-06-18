@@ -15,7 +15,7 @@ struct Logger {
     pthread_mutex_t mutex;
 };
 
-Logger *logger_create(char *path) {
+Logger *logger_create(const char path[const]) {
     FILE *log_file = fopen(path, "w");
     if (log_file == NULL) {
         perror("logger_create fopen error");
@@ -47,7 +47,7 @@ Logger *logger_get_global(void) {
     return global_logger;
 }
 
-void logger_log(Logger *logger, enum LOGGER_LEVEL level, char *message) {
+void logger_log(Logger *const logger, const enum LOGGER_LEVEL level, const char message[const]) {
     if (logger == NULL) {
         logger_log(logger_get_global(), LOGGER_LEVEL_WARN,
                    "Received logger_log call with logger = NULL.");
@@ -59,7 +59,7 @@ void logger_log(Logger *logger, enum LOGGER_LEVEL level, char *message) {
         return;
     }
 
-    if(level < LOGGER_MINIMUM_LOGGING_LEVEL) {
+    if (level < LOGGER_MINIMUM_LOGGING_LEVEL) {
         return;
     }
 
@@ -81,7 +81,7 @@ void logger_log(Logger *logger, enum LOGGER_LEVEL level, char *message) {
     pthread_mutex_unlock(&logger->mutex);
 }
 
-void logger_destroy(Logger *logger) {
+void logger_destroy(Logger *const logger) {
     if (logger == NULL) {
         logger_log(logger_get_global(), LOGGER_LEVEL_WARN,
                    "Received logger_destroy call with logger = NULL.");

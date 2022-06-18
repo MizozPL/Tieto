@@ -24,7 +24,7 @@ static bool reader_should_stop_synchronized(Reader *reader);
 
 static void *reader_thread(void *args);
 
-Reader *reader_create(Queue *reader_analyzer_queue, Watchdog *watchdog) {
+Reader *reader_create(Queue *const reader_analyzer_queue, Watchdog *const watchdog) {
     logger_log(logger_get_global(), LOGGER_LEVEL_DEBUG, "reader_create: Entry.");
 
     if (reader_analyzer_queue == NULL) {
@@ -64,7 +64,7 @@ Reader *reader_create(Queue *reader_analyzer_queue, Watchdog *watchdog) {
     return reader;
 }
 
-void reader_await_and_destroy(Reader *reader) {
+void reader_await_and_destroy(Reader *const reader) {
     logger_log(logger_get_global(), LOGGER_LEVEL_DEBUG, "reader_await_and_destroy: Entry.");
 
     if (reader == NULL) {
@@ -80,7 +80,7 @@ void reader_await_and_destroy(Reader *reader) {
     logger_log(logger_get_global(), LOGGER_LEVEL_DEBUG, "reader_await_and_destroy: Success.");
 }
 
-void reader_request_stop_synchronized(Reader *reader) {
+void reader_request_stop_synchronized(Reader *const reader) {
     logger_log(logger_get_global(), LOGGER_LEVEL_DEBUG, "reader_request_stop_synchronized: Entry.");
 
     if (reader == NULL) {
@@ -100,11 +100,11 @@ void reader_request_stop_synchronized(Reader *reader) {
     logger_log(logger_get_global(), LOGGER_LEVEL_DEBUG, "reader_request_stop_synchronized: Success.");
 }
 
-static void reader_request_stop_synchronized_void(void *reader) {
+static void reader_request_stop_synchronized_void(void *const reader) {
     reader_request_stop_synchronized((Reader *) reader);
 }
 
-static bool reader_should_stop_synchronized(Reader *reader) {
+static bool reader_should_stop_synchronized(Reader *const reader) {
     if (reader == NULL) {
         logger_log(logger_get_global(), LOGGER_LEVEL_WARN,
                    "Received reader_should_stop_synchronized call with reader = NULL.");

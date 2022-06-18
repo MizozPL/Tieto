@@ -28,7 +28,7 @@ static bool watchdog_should_stop_synchronized(Watchdog *watchdog);
 
 static void *watchdog_thread(void *args);
 
-Watchdog *watchdog_create(size_t watches) {
+Watchdog *watchdog_create(const size_t watches) {
     logger_log(logger_get_global(), LOGGER_LEVEL_DEBUG, "watchdog_create: Entry.");
 
     if (watches <= 0) {
@@ -62,7 +62,7 @@ Watchdog *watchdog_create(size_t watches) {
     return watchdog;
 }
 
-void watchdog_await_and_destroy(Watchdog *watchdog) {
+void watchdog_await_and_destroy(Watchdog *const watchdog) {
     logger_log(logger_get_global(), LOGGER_LEVEL_DEBUG, "watchdog_await_and_destroy: Entry.");
 
     if (watchdog == NULL) {
@@ -78,7 +78,7 @@ void watchdog_await_and_destroy(Watchdog *watchdog) {
     logger_log(logger_get_global(), LOGGER_LEVEL_DEBUG, "watchdog_await_and_destroy: Success.");
 }
 
-void watchdog_request_stop_synchronized(Watchdog *watchdog) {
+void watchdog_request_stop_synchronized(Watchdog *const watchdog) {
     logger_log(logger_get_global(), LOGGER_LEVEL_DEBUG, "watchdog_request_stop_synchronized: Entry.");
 
     if (watchdog == NULL) {
@@ -94,7 +94,7 @@ void watchdog_request_stop_synchronized(Watchdog *watchdog) {
     logger_log(logger_get_global(), LOGGER_LEVEL_DEBUG, "watchdog_request_stop_synchronized: Success.");
 }
 
-size_t watchdog_register_watch(Watchdog *watchdog, void (*function)(void *), void *object) {
+size_t watchdog_register_watch(Watchdog *const watchdog, void (*const function)(void *), void *const object) {
     logger_log(logger_get_global(), LOGGER_LEVEL_DEBUG, "watchdog_register_watch: Entry.");
 
     if (watchdog == NULL) {
@@ -117,7 +117,7 @@ size_t watchdog_register_watch(Watchdog *watchdog, void (*function)(void *), voi
     return return_value;
 }
 
-void watchdog_update(Watchdog *watchdog, size_t index) {
+void watchdog_update(Watchdog *const watchdog, const size_t index) {
     if (watchdog == NULL) {
         logger_log(logger_get_global(), LOGGER_LEVEL_WARN,
                    "Received watchdog_update call with watchdog = NULL.");
@@ -135,7 +135,7 @@ void watchdog_update(Watchdog *watchdog, size_t index) {
     pthread_mutex_unlock(&watchdog->mutex);
 }
 
-void watchdog_start_watching(Watchdog *watchdog) {
+void watchdog_start_watching(Watchdog *const watchdog) {
     logger_log(logger_get_global(), LOGGER_LEVEL_DEBUG, "watchdog_start_watching: Entry.");
 
     if (watchdog == NULL) {
@@ -151,7 +151,7 @@ void watchdog_start_watching(Watchdog *watchdog) {
     logger_log(logger_get_global(), LOGGER_LEVEL_DEBUG, "watchdog_start_watching: Success.");
 }
 
-void watchdog_pause_watching(Watchdog *watchdog) {
+void watchdog_pause_watching(Watchdog *const watchdog) {
     logger_log(logger_get_global(), LOGGER_LEVEL_DEBUG, "watchdog_pause_watching: Entry.");
 
     if (watchdog == NULL) {
@@ -167,7 +167,7 @@ void watchdog_pause_watching(Watchdog *watchdog) {
     logger_log(logger_get_global(), LOGGER_LEVEL_DEBUG, "watchdog_pause_watching: Success.");
 }
 
-static bool watchdog_should_stop_synchronized(Watchdog *watchdog) {
+static bool watchdog_should_stop_synchronized(Watchdog *const watchdog) {
     if (watchdog == NULL) {
         logger_log(logger_get_global(), LOGGER_LEVEL_WARN,
                    "Received watchdog_should_stop_synchronized call with watchdog = NULL.");
