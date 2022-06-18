@@ -1,6 +1,5 @@
 #include <stdbool.h>
 #include <stdlib.h>
-#include <stdio.h>
 #include <pthread.h>
 #include "../include/Watchdog.h"
 #include "../include/Logger.h"

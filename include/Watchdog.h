@@ -1,6 +1,8 @@
 #ifndef TIETO_WATCHDOG_H
 #define TIETO_WATCHDOG_H
 
+#include <stddef.h>
+
 typedef struct Watchdog Watchdog;
 
 Watchdog *watchdog_create(size_t watches);

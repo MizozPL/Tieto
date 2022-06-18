@@ -32,7 +32,7 @@ static void sighandler(int signo) {
     }
 }
 
-int main() {
+int main(void) {
     logger_log(logger_get_global(), LOGGER_LEVEL_INFO, "Process starting.");
     //Flags for children
     sigset_t set_blocked;
