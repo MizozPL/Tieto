@@ -136,7 +136,7 @@ static void *reader_thread(void *args) {
     }
 
     while (!reader_should_stop_synchronized(reader)) {
-        logger_log(logger_get_global(), LOGGER_LEVEL_DEBUG, "printer_thread: Iteration.");
+        logger_log(logger_get_global(), LOGGER_LEVEL_DEBUG, "reader_thread: Iteration.");
         watchdog_update(reader->watchdog, reader->watchdog_index);
 
         char *buffer = malloc(sizeof(char) * READER_CHAR_BUFFER_SIZE);

@@ -11,7 +11,7 @@ static int objectB = 8;
 static bool flagA = false;
 static bool flagB = false;
 
-void stopA(void *object) {
+static void stopA(void *object) {
     assert(&objectA == object);
 
     pthread_mutex_lock(&mutex);
@@ -19,7 +19,7 @@ void stopA(void *object) {
     pthread_mutex_unlock(&mutex);
 }
 
-void stopB(void *object) {
+static void stopB(void *object) {
     assert(&objectB == object);
 
     pthread_mutex_lock(&mutex);
