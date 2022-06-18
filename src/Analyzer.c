@@ -244,7 +244,7 @@ static void *analyzer_thread(void *args) {
                            "Calculated total_time_diff = 0. Try increasing READER_UPDATE_INTERVAL.");
                 error = true;
             }
-            long double percentage = (total_time_diff - idle_time_diff) / ((long double) total_time_diff);
+            long double percentage = (total_time_diff - idle_time_diff) * 100 / ((long double) total_time_diff);
             array->buffer[i] = percentage;
         }
 

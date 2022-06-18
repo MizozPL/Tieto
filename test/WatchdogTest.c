@@ -58,6 +58,8 @@ int main(void) {
     assert(!flagA && !flagB);
     pthread_mutex_unlock(&mutex);
 
+    assert(!watchdog_was_triggered(watchdog));
+
     sleep(1);
     watchdog_update(watchdog, a);
     watchdog_update(watchdog, b);
@@ -68,6 +70,7 @@ int main(void) {
     pthread_mutex_unlock(&mutex);
 
     watchdog_request_stop_synchronized(watchdog);
+    assert(watchdog_was_triggered(watchdog));
     watchdog_await_and_destroy(watchdog);
 
     pthread_mutex_destroy(&mutex);

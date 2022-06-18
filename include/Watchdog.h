@@ -2,6 +2,7 @@
 #define TIETO_WATCHDOG_H
 
 #include <stddef.h>
+#include <stdbool.h>
 
 typedef struct Watchdog Watchdog;
 
@@ -18,5 +19,7 @@ void watchdog_update(Watchdog *watchdog, size_t index);
 void watchdog_start_watching(Watchdog *watchdog);
 
 void watchdog_pause_watching(Watchdog *watchdog);
+
+bool watchdog_was_triggered(Watchdog *watchdog);
 
 #endif //TIETO_WATCHDOG_H

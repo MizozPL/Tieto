@@ -20,6 +20,7 @@ struct Watchdog {
     pthread_mutex_t mutex;
     bool watching;
     bool should_stop;
+    bool triggered;
     Watch watches_array[];
 };
 
@@ -47,6 +48,7 @@ Watchdog *watchdog_create(const size_t watches) {
             .registered_count = 0,
             .watching = false,
             .should_stop = false,
+            .triggered = false,
             .mutex = PTHREAD_MUTEX_INITIALIZER
     };
 
@@ -166,6 +168,20 @@ void watchdog_pause_watching(Watchdog *const watchdog) {
     logger_log(logger_get_global(), LOGGER_LEVEL_DEBUG, "watchdog_pause_watching: Success.");
 }
 
+bool watchdog_was_triggered(Watchdog *const watchdog) {
+    if (watchdog == NULL) {
+        logger_log(logger_get_global(), LOGGER_LEVEL_WARN,
+                   "Received watchdog_was_triggered call with watchdog = NULL.");
+        return true;
+    }
+
+    bool return_value;
+    pthread_mutex_lock(&watchdog->mutex);
+    return_value = watchdog->triggered;
+    pthread_mutex_unlock(&watchdog->mutex);
+    return return_value;
+}
+
 static bool watchdog_should_stop_synchronized(Watchdog *const watchdog) {
     if (watchdog == NULL) {
         logger_log(logger_get_global(), LOGGER_LEVEL_WARN,
@@ -200,6 +216,7 @@ static void *watchdog_thread(void *args) {
             logger_log(logger_get_global(), LOGGER_LEVEL_WARN, "watchdog_thread: flagged. Stopping program.");
             pthread_mutex_lock(&watchdog->mutex);
             watchdog->should_stop = true;
+            watchdog->triggered = true;
             for (size_t i = 0; i < watchdog->watches; i++) {
                 watchdog->watches_array[i].function(watchdog->watches_array[i].object);
             }

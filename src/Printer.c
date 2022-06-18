@@ -138,10 +138,10 @@ static void *printer_thread(void *args) {
 
         printf("\x1b[2J\x1b[H");
         if (array->num_elements > 0) {
-            printf("CPU:\t%.2Lf\n", array->buffer[0]);
+            printf("CPU:\t%.2Lf%%\n", array->buffer[0]);
         }
         for (size_t i = 1; i < array->num_elements; i++) {
-            printf("CPU%zu:\t%.2Lf\n", i - 1, array->buffer[i]);
+            printf("CPU%zu:\t%.2Lf%%\n", i - 1, array->buffer[i]);
         }
         printf("\n");
 

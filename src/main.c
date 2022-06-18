@@ -1,5 +1,6 @@
 #include <unistd.h>
 #include <signal.h>
+#include <stdio.h>
 
 #include "../include/Reader.h"
 #include "../include/Analyzer.h"
@@ -70,6 +71,15 @@ int main(void) {
     reader_await_and_destroy(reader);
     analyzer_await_and_destroy(analyzer);
     printer_await_and_destroy(printer);
+
+    bool watchdog_triggered = watchdog_was_triggered(watchdog);
+    if (watchdog_triggered) {
+        printf("Watchdog triggered. Shutting down.\n");
+        logger_log(logger_get_global(), LOGGER_LEVEL_INFO, "Watchdog status: TRIGGERED.");
+    } else {
+        logger_log(logger_get_global(), LOGGER_LEVEL_INFO, "Watchdog status: CLEAN.");
+    }
+
     watchdog_await_and_destroy(watchdog);
     logger_log(logger_get_global(), LOGGER_LEVEL_INFO, "Children joined.");
 
@@ -90,5 +100,10 @@ int main(void) {
 
     logger_log(logger_get_global(), LOGGER_LEVEL_INFO, "Destroying logger.");
     logger_destroy(logger_get_global());
+
+    if (watchdog_triggered) {
+        return 1;
+    }
+
     return 0;
 }
