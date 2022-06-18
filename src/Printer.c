@@ -111,10 +111,6 @@ static bool printer_should_stop_synchronized(Printer *const printer) {
     return_value = printer->should_stop;
     pthread_mutex_unlock(&printer->mutex);
 
-    queue_lock(printer->analyzer_printer_queue);
-    queue_notify_extract(printer->analyzer_printer_queue);
-    queue_unlock(printer->analyzer_printer_queue);
-
     return return_value;
 }
 
